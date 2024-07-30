@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panier d'achat</title>
+    <style>
+        #cart {
+            width: 60%;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #c280ff;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+        .quantity-control button {
+            background-color: #ddd;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .quantity-control span.quantity {
+            margin: 0 10px;
+            width: 30px;
+            text-align: center;
+        }
+        .price {
+            margin-right: 20px;
+        }
+        .remove, .like {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        #total {
+            margin: 20px auto;
+            text-align: right;
+            width: 60%;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .p{
+            display: flex;
+            justify-content: center;
+        }
+        .item-name, .price, .quantity-control, .remove, .like {
+        margin: 5px 0;
+    }
+    </style>
+</head>
+<body>
+    <h1 class="p">Mon Panier</h1>
+    <div id="cart">
+        <div class="cart-item" data-id="1">
+            <span class="item-name">Produit 1</span>
+            <div class="quantity-control">
+                <button class="minus">-</button>
+                <span class="quantity">1</span>
+                <button class="plus">+</button>
+            </div>
+            <span class="price" data-price="10">50 €</span>
+            <button class="remove">Supprimer</button>
+            <button class="like">❤</button>
+        </div>
+        <div class="cart-item" data-id="2">
+            <span class="item-name">Produit 2</span>
+            <div class="quantity-control">
+                <button class="minus">-</button>
+                <span class="quantity">4</span>
+                <button class="plus">+</button>
+            </div>
+            <span class="price" data-price="25">100 €</span>
+            <button class="remove">Supprimer</button>
+            <button class="like">❤</button>
+        </div>
+        <div class="cart-item" data-id="3">
+            <span class="item-name">Produit 3</span>
+            <div class="quantity-control">
+                <button class="minus">-</button>
+                <span class="quantity">1</span>
+                <button class="plus">+</button>
+            </div>
+            <span class="price" data-price="150">150 €</span>
+            <button class="remove">Supprimer</button>
+            <button class="like">❤</button>
+        </div>
+    </div>
+    <div id="total">
+        Total: <span id="totalPrice">260</span> €
+    </div>
+    <script>
+        // mise à jour du prix total
+        function updateTotalPrice() {
+            const cartItems = document.querySelectorAll('.cart-item');
+            let total = 0;
+
+            cartItems.forEach(item => {
+                const priceElement = item.querySelector('.price');
+                const quantityElement = item.querySelector('.quantity');
+                const price = parseFloat(priceElement.dataset.price);
+                const quantity = parseInt(quantityElement.textContent);
+                total += price * quantity;
+            });
+
+            document.getElementById('totalPrice').textContent = total.toFixed(2);
+        }
+
+        // gestion des changements de quantité
+        function updateQuantity(button, increment) {
+            const quantityElement = button.parentElement.querySelector('.quantity');
+            let quantity = parseInt(quantityElement.textContent);
+
+            if (increment) {
+                quantity++;
+            } else {
+                quantity = Math.max(1, quantity - 1); // assurez-vous que la quantité ne descend pas en dessous de 1
+            }
+
+            quantityElement.textContent = quantity;
+            updateTotalPrice();
+        }
+
+        // tout les boutons plus et moins
+        document.querySelectorAll('.plus').forEach(button => {
+            button.addEventListener('click', () => updateQuantity(button, true));
+        });
+
+        document.querySelectorAll('.minus').forEach(button => {
+            button.addEventListener('click', () => updateQuantity(button, false));
+        });
+
+        // gérer l’enlèvement d’articles
+        function removeItem(button) {
+            const cartItem = button.parentElement;
+            cartItem.remove();
+            updateTotalPrice();
+        }
+
+        // tout les boutons de suppression
+        document.querySelectorAll('.remove').forEach(button => {
+            button.addEventListener('click', () => removeItem(button));
+        });
+
+        updateTotalPrice();
+    </script>
+</body>
+</html>
